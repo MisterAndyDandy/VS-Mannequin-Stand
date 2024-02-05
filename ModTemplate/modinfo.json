@@ -1,0 +1,12 @@
+{
+  "type": "code",
+  "modid": "mannequinstand",
+  "name": "Mannequin Stand",
+  "description": "What!. You can now use clothes on new Mannequin Stands.",
+  "authors": [ "Mister Andy Dandy", "JapanHasRice" ],
+  "contributors": [ "Ruddi" ],
+  "version": "1.0.3",
+  "dependency": {
+    "game": "1.19.0"
+  }
+}

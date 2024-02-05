@@ -1,0 +1,100 @@
+{
+	"code": "mannequinstand",
+	"class": "ItemMannequinStand",
+	"attributes": {
+		"handbook": {
+			"groupBy": [ "mannequinstand-{material}" ]
+		}
+	},
+	"variantgroups": [
+		{
+			"code": "wood",
+			"states": [ "aged", "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+		}
+	],
+	"shape": {
+		"base": "mannequins:entity/land/mannequin-stand"
+	},
+	"texturesByType": {
+		"*": {
+			"seraph": { "base": "mannequins:entity/land/mannequin/wood/debarked/{wood}" }
+		}
+	},
+	"creativeinventory": {
+		"general": [ "*" ],
+		"items": [ "*" ]
+	},
+	"heldTpIdleAnimation": "holdunderarm",
+	"maxstacksize": 1,
+	"combustibleProps": {
+		"burnTemperature": 600,
+		"burnDuration": 30
+	},
+	"guiTransform": {
+		"translation": {
+			"x": 3,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 35,
+			"y": 11,
+			"z": -149
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 1,
+			"z": 0.5
+		},
+		"scale": 0.84
+	},
+	"fpHandTransform": {
+		"translation": {
+			"x": -0.45,
+			"y": 0.2,
+			"z": 1.5
+		},
+		"rotation": {
+			"x": -58,
+			"y": -86,
+			"z": -6
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 1.31
+	},
+	"tpHandTransform": {
+		"translation": {
+			"x": -0.3,
+			"y": -0.3,
+			"z": -0.6
+		},
+		"rotation": {
+			"x": 0,
+			"y": 10,
+			"z": -101
+		},
+		"scale": 0.66
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": -90,
+			"y": 0,
+			"z": 0
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0.5,
+			"z": 0.3
+		},
+		"scale": 4.20
+	}
+}

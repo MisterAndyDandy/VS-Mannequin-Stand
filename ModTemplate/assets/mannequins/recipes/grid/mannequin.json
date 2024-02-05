@@ -1,0 +1,35 @@
+{
+  "ingredientPattern": "B,K,G,_P_,___",
+  "ingredients": {
+    "B": {
+      "type": "item",
+      "code": "game:hammer-*",
+      "isTool": true,
+      "toolDurabilityCost": 30
+    },
+    "K": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "quantity": 12
+    },
+    "G": {
+      "type": "item",
+      "code": "game:metalnailsandstrips-*",
+      "quantity": 4
+    },
+    "P": {
+      "type": "item",
+      "code": "game:rope",
+      "quantity": 4
+    }
+  },
+  "name": "mannequin",
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "mannequins:mannequinstand-{wood}",
+    "quantity": 1
+  }
+}

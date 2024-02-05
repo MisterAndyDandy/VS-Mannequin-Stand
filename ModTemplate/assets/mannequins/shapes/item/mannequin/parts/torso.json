@@ -1,0 +1,317 @@
+{
+	"editor": {
+		"allAngles": true,
+		"entityTextureMode": false
+	},
+	"textureWidth": 64,
+	"textureHeight": 64,
+	"textureSizes": {
+		"seraph": [64,64]
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "LowerTorso",
+			"from": [ 4.5, 0.0, 10.0 ],
+			"to": [ 9.5, 5.0, 16.0 ],
+			"rotationOrigin": [ 5.0, 0.0, 10.0 ],
+			"rotationY": 90.0,
+			"rotationZ": 3.0,
+			"faces": {
+				"north": { "texture": "#seraph", "uv": [ 41.0, 10.0, 46.0, 15.0 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] },
+				"east": { "texture": "#seraph", "uv": [ 57.0, 10.0, 63.0, 15.0 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] },
+				"south": { "texture": "#seraph", "uv": [ 52.0, 10.0, 57.0, 15.0 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] },
+				"west": { "texture": "#seraph", "uv": [ 46.0, 10.0, 52.0, 15.0 ], "autoUv": false, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] },
+				"up": { "texture": "#seraph", "uv": [ 46.0, 7.0, 41.0, 10.0 ], "rotation": 90, "autoUv": false, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] },
+				"down": { "texture": "#seraph", "uv": [ 39.5, 1.5, 45.5, 6.5 ], "rotation": 90, "windMode": [-1,-1,-1,-1], "windData": [1,1,1,1] }
+			},
+			"children": [
+				{
+					"name": "UpperTorso",
+					"from": [ 0.0, 4.3, -0.1 ],
+					"to": [ 5.0, 9.3, 6.1 ],
+					"rotationOrigin": [ 2.0, 5.0, 3.0 ],
+					"rotationZ": -6.0,
+					"faces": {
+						"north": { "texture": "#seraph", "uv": [ 41.0, 5.0, 46.0, 10.0 ], "autoUv": false },
+						"east": { "texture": "#seraph", "uv": [ 57.0, 5.0, 63.0, 10.0 ], "autoUv": false },
+						"south": { "texture": "#seraph", "uv": [ 52.0, 5.0, 57.0, 10.0 ], "autoUv": false },
+						"west": { "texture": "#seraph", "uv": [ 46.0, 5.0, 52.0, 10.0 ], "autoUv": false },
+						"up": { "texture": "#seraph", "uv": [ 46.0, 0.0, 52.0, 5.0 ], "rotation": 90, "autoUv": false },
+						"down": { "texture": "#seraph", "uv": [ 34.0, 5.0, 40.0, 10.0 ], "rotation": 90, "autoUv": false }
+					},
+					"children": [
+						{
+							"name": "UpperButtons",
+							"from": [ -0.1, 0.0, 2.3 ],
+							"to": [ -0.1, 5.0, 3.9 ],
+							"rotationOrigin": [ -0.1, 5.0, 2.8 ],
+							"faces": {
+								"west": { "texture": "#seraph", "uv": [ 0.0, 0.0, 1.5, 5.0 ] }
+							}
+						},
+						{
+							"name": "UpperBackAttachment",
+							"from": [ 5.5, 2.0, 3.0 ],
+							"to": [ 5.5, 2.0, 3.0 ],
+							"rotationOrigin": [ 5.5, 2.0, 3.0 ],
+							"faces": {
+								"north": { "texture": "#null", "uv": [ 0.0, 0.5, 0.5, 1.0 ] },
+								"east": { "texture": "#null", "uv": [ 0.5, 0.5, 1.0, 1.0 ] },
+								"south": { "texture": "#null", "uv": [ 1.0, 0.5, 1.5, 1.0 ] },
+								"west": { "texture": "#null", "uv": [ 1.5, 0.5, 2.0, 1.0 ] },
+								"up": { "texture": "#null", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
+								"down": { "texture": "#null", "uv": [ 0.5, 0.0, 1.0, 0.5 ] }
+							}
+						}
+					],
+					"attachmentpoints": [
+						{
+							"code": "Back",
+							"posX": "5.0","posY": "3.0","posZ": "3.0",
+							"rotationX": "0.0","rotationY": "0.0","rotationZ": "0.0"
+						}
+					]
+				},
+				{
+					"name": "Middle",
+					"from": [ 0.5, 7.4, 1.0 ],
+					"to": [ 4.0, 9.4, 5.0 ],
+					"rotationOrigin": [ 0.0, 7.0, 1.0 ],
+					"rotationZ": -5.0,
+					"faces": {
+						"north": { "texture": "#seraph", "uv": [ 42.0, 1.0, 45.5, 3.0 ] },
+						"west": { "texture": "#seraph", "uv": [ 42.0, 1.0, 46.0, 3.0 ] },
+						"up": { "texture": "#seraph", "uv": [ 41.5, 0.0, 45.0, 4.0 ] },
+						"down": { "texture": "#seraph", "uv": [ 41.5, 0.5, 45.0, 4.5 ] }
+					}
+				}
+			]
+		}
+	],
+	"animations": [
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+				{
+					"frame": 0,
+					"elements": {
+						"UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 15,
+					"elements": {
+						"LowerTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+						"UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.5, "rotationX": 5.0, "rotationY": 15.0, "rotationZ": 0.0 }
+					}
+				}
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+				{
+					"frame": 0,
+					"elements": {
+						"LowerTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+						"UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+					}
+				},
+				{
+					"frame": 9,
+					"elements": {
+						"LowerTorso": { "rotationX": 0.0, "rotationY": -5.0, "rotationZ": 0.0 },
+						"UpperTorso": { "rotationX": 0.0, "rotationY": -22.0, "rotationZ": -8.0 }
+					}
+				}
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		}
+	]
+}

@@ -1,0 +1,102 @@
+{
+	"code": "mannequinstand",
+	"class": "EntityMannequinStand",
+	"hitboxSize": {
+		"x": 1,
+		"y": 2
+	},
+	"attributes": {
+		"spawnDamageParticles": true,
+		"skinnableParts": [
+			{
+				"code": "baseskin",
+				"type": "texture",
+				"variants": [
+					{
+						"code": "aged",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/aged"
+					},
+					{
+						"code": "acacia",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/acacia"
+					},
+					{
+						"code": "baldcypress",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/baldcypress"
+					},
+					{
+						"code": "birch",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/birch"
+					},
+					{
+						"code": "ebony",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/ebony"
+					},
+					{
+						"code": "kapok",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/kapok"
+					},
+					{
+						"code": "larch",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/larch"
+					},
+					{
+						"code": "maple",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/maple"
+					},
+					{
+						"code": "oak",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/oak"
+					},
+					{
+						"code": "pine",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/pine"
+					},
+					{
+						"code": "purpleheart",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/purpleheart"
+					},
+					{
+						"code": "redwood",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/redwood"
+					},
+					{
+						"code": "walnut",
+						"texture": "mannequins:entity/land/mannequin/wood/debarked/walnut"
+					}
+				]
+			}
+		]
+	},
+	"eyeHeight": 1.8,
+	"knockbackResistance": 30,
+	"client": {
+		"renderer": "SkinnableShape",
+		"shape": { "base": "mannequins:entity/land/mannequin-stand" },
+		"texture": {
+			"base": "mannequins:entity/land/mannequin/wood/debarked/oak"
+		},
+		"behaviors": [
+			{ "code": "repulseagents" },
+			{
+				"code": "controlledphysics",
+				"stepHeight": 1.0001
+			},
+			{ "code": "interpolateposition" },
+			{ "code": "extraskinnable" }
+		]
+	},
+	"server": {
+		"behaviors": [
+			{ "code": "repulseagents" },
+			{
+				"code": "controlledphysics",
+				"stepHeight": 1.1251
+			},
+			{ "code": "extraskinnable" }
+		]
+	},
+	"sounds": {
+		"hurt": "game:player/slap"
+	}
+}

@@ -1,0 +1,248 @@
+{
+	"editor": {
+		"allAngles": true,
+		"entityTextureMode": false
+	},
+	"textureWidth": 64,
+	"textureHeight": 64,
+	"textureSizes": {
+		"seraph": [64,64]
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "UpperFootR",
+			"from": [ 10.0, 3.0, 7.5 ], 
+			"to": [ 14.2, 12.0, 10.7 ], 
+			"rotationOrigin": [ 10.0, 3.0, 8.0 ],
+			"rotationX": 90.0,
+			"rotationZ": -180.0,
+			"faces": {
+				"north": { "texture": "#seraph", "uv": [ 4.0, 37.0, 8.0, 46.0 ], "windMode": [-1,-1,-1,-1] },
+				"east": { "texture": "#seraph", "uv": [ 1.0, 37.0, 4.0, 46.0 ] },
+				"south": { "texture": "#seraph", "uv": [ 11.0, 37.0, 15.0, 46.0 ] },
+				"west": { "texture": "#seraph", "uv": [ 8.0, 37.0, 11.0, 46.0 ] },
+				"up": { "texture": "#seraph", "uv": [ 8.0, 33.0, 11.0, 37.0 ], "rotation": 90 },
+				"down": { "texture": "#seraph", "uv": [ 8.0, 46.0, 11.0, 50.0 ], "rotation": 90 }
+			},
+			"children": [
+				{
+					"name": "LowerFootR",
+					"from": [ 0.1, -9.0, 0.1 ], 
+					"to": [ 4.1, 1.0, 3.1 ], 
+					"rotationOrigin": [ 2.1, 0.5, 1.4 ],
+					"rotationX": -2.0,
+					"rotationZ": 2.0,
+					"faces": {
+						"north": { "texture": "#seraph", "uv": [ 4.0, 50.0, 8.0, 60.0 ], "windMode": [-1,-1,-1,-1] },
+						"east": { "texture": "#seraph", "uv": [ 1.0, 50.0, 4.0, 60.0 ], "windMode": [-1,-1,-1,-1] },
+						"south": { "texture": "#seraph", "uv": [ 11.0, 50.0, 15.0, 60.0 ] },
+						"west": { "texture": "#seraph", "uv": [ 8.0, 50.0, 11.0, 60.0 ], "windMode": [-1,-1,-1,-1] },
+						"up": { "texture": "#seraph", "uv": [ 8.0, 46.0, 11.0, 50.0 ], "rotation": 90 },
+						"down": { "texture": "#seraph", "uv": [ 8.0, 60.0, 11.0, 64.0 ], "rotation": 90 }
+					}
+				}
+			]
+		}
+	],
+	"animations": [
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Shield up",
+			"code": "shieldup",
+			"quantityframes": 35,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Bow aim",
+			"code": "bowaim",
+			"quantityframes": 16,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Throw aim",
+			"code": "throwaim",
+			"quantityframes": 10,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Holding both hands up",
+			"code": "holdbothhandsup",
+			"quantityframes": 30,
+			"onActivityStopped": "EaseOut",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Left hand up",
+			"code": "lefthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		},
+
+		{
+			"name": "Right hand up",
+			"code": "righthandup",
+			"quantityframes": 30,
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Hold",
+			"keyframes": [
+
+			]
+		}
+	]
+}
