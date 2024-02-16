@@ -1,0 +1,10 @@
+{
+  "code": "nametag",
+  "class": "ItemNameTag",
+  "shape": { "base": "game:item/gear-rusty" },
+  "creativeinventory": {
+    "general": [ "*" ],
+    "items": [ "*" ]
+  },
+  "maxstacksize": 1
+}

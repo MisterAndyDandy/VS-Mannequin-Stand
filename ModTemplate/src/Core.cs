@@ -5,6 +5,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace MannequinStand
 {
@@ -16,66 +17,55 @@ namespace MannequinStand
             base.Start(api);
             api.RegisterEntity("EntityMannequinStand", typeof(EntityMannequin));
             api.RegisterItemClass("ItemMannequinStand", typeof(ItemMannequin));
+            api.RegisterItemClass("ItemNameTag", typeof(ItemNameTag));
         }
 
-        
         public override void StartServerSide(ICoreServerAPI api)
         {
             IChatCommandApi chatCommands = api.ChatCommands;
-
             CommandArgumentParsers parsers = api.ChatCommands.Parsers;
 
             chatCommands
                 .Create("nametag")
                 .WithDescription("")
-                .WithArgs(new ICommandArgumentParser[] {parsers.All("nametag")})
-                .RequiresPrivilege(Privilege.chat).HandleWith(NameTagCommand);
+                .WithArgs(new ICommandArgumentParser[] { parsers.All("nametag") })
+                .RequiresPrivilege(Privilege.chat)
+                .HandleWith(NameTagCommand);
         }
 
         private TextCommandResult NameTagCommand(TextCommandCallingArgs args)
         {
-            IPlayer _player = args.Caller.Player;
+            IPlayer player = args.Caller.Player;
 
-            if (_player is IServerPlayer player)
+            if (!(player is IServerPlayer serverPlayer))
+                return TextCommandResult.Success();
+
+            if (!player.Entity.World.Claims.TryAccess(player, args.Caller.Pos.AsBlockPos, EnumBlockAccessFlags.BuildOrBreak))
             {
-
-                bool requirementItem = false;
-
-                EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
-
-                if (!args.Caller.Entity.World.Claims.TryAccess(_player, args.Caller.Pos.AsBlockPos, EnumBlockAccessFlags.BuildOrBreak))
-                {
-                    player.SendMessage(0, $"You don't have permission to set {_player?.CurrentEntitySelection?.Entity.GetName()}", EnumChatType.OwnMessage);
-                }
-
-                if (!requirementItem)
-                {
-                    ItemStack nameTagStack = null;
-
-                    if (_player.Entity.ActiveHandItemSlot.Empty) { return TextCommandResult.Success(); }
-
-                    if (_player.Entity.ActiveHandItemSlot.Itemstack?.Item is Item itemNameTag)
-                    {
-                        nameTagStack = new ItemStack(itemNameTag);
-                        nameTagStack.Attributes.SetString("nametag", args.Parsers[0].GetValue().ToString());
-                        _player.Entity.ActiveHandItemSlot.Itemstack = nameTagStack;
-                        _player.InventoryManager.BroadcastHotbarSlot();
-                        _player.Entity.ActiveHandItemSlot.MarkDirty();
-                        return TextCommandResult.Success();
-                    }
-                }
-
-                if (requirementItem && entityMannequin == null)
-                {
-                    player.SendMessage(0, $"You can't name {_player?.CurrentEntitySelection?.Entity.GetName()}", EnumChatType.OwnMessage);
-                    return TextCommandResult.Success();
-                }
-
-                entityMannequin.WatchedAttributes.SetString("nametag", args.Parsers[0].GetValue().ToString());
+                serverPlayer.SendMessage(0, $"You don't have permission to set {player?.CurrentEntitySelection?.Entity.GetName()}", EnumChatType.OwnMessage);
+                return TextCommandResult.Success();
             }
+
+            if (player.Entity.ActiveHandItemSlot.Empty)
+                return TextCommandResult.Success();
+
+            ItemStack nameTagStack = player.Entity.ActiveHandItemSlot.Itemstack;
+
+            SetItemNameTag(player, nameTagStack, args.Parsers[0].GetValue().ToString());
 
             return TextCommandResult.Success();
         }
 
+        public void SetItemNameTag(IPlayer player, ItemStack nameTagStack, string name)
+        {
+            if (!(nameTagStack?.Item is ItemNameTag itemNameTag))
+                return;
+
+            nameTagStack = new ItemStack(itemNameTag);
+            nameTagStack.Attributes.SetString("nametag", name);
+            player.Entity.ActiveHandItemSlot.Itemstack = nameTagStack;
+            player.InventoryManager.BroadcastHotbarSlot();
+            player.Entity.ActiveHandItemSlot.MarkDirty();
+        }
     }
 }

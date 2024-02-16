@@ -37,6 +37,10 @@
     <Content Include="assets\**">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Remove="assets\mannequins\blocktypes\**" />
+    <Content Remove="assets\mannequins\blocktypes\**" />
+    <EmbeddedResource Remove="assets\mannequins\blocktypes\**" />
+    <None Remove="assets\mannequins\blocktypes\**" />
 	<Content Include="modicon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -50,7 +54,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="assets\mannequins\blocktypes\" />
     <Folder Include="assets\mannequins\shapes\block\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="src\Item\ItemNameTag.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 </Project>
