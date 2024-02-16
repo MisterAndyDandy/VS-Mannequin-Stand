@@ -22,7 +22,6 @@ namespace MannequinStand
         protected const int packetId_CloseInventory = 1001;
         protected const string CurPoseKey = "curPose";
         protected const string InventoryTreeKey = "inventory";
-
         protected string MannequinMaterial = "oak";
         protected const string MannequinTreeKey = "mannequin";
         protected const string BaseSkin = "baseskin";
@@ -34,6 +33,8 @@ namespace MannequinStand
         public override IInventory GearInventory => gearInv;
 
         protected virtual string inventoryId => "gear-" + EntityId;
+
+        public string NameTag => WatchedAttributes.GetAsString("nametag");
 
         protected int CurPose
         {
@@ -101,7 +102,6 @@ namespace MannequinStand
                 WatchedAttributes.RegisterModifiedListener(MannequinTreeKey, readMannequinPartsFromAttributes);
                 WatchedAttributes.RegisterModifiedListener(InventoryTreeKey, readInventoryFromAttributes);
                 WatchedAttributes.RegisterModifiedListener(CurPoseKey, RefreshPose);
-
             }
 
  
@@ -194,6 +194,11 @@ namespace MannequinStand
             var itemStackTree = PlacedByItemStack.Attributes.GetOrAddTreeAttribute(MannequinTreeKey);
 
             mannequinTreeKey.SetString(BaseSkin, itemStackTree.GetString(BaseSkin, PlacedByItemStack.Collectible.Code.EndVariant()));
+
+            if(PlacedByItemStack.Attributes.HasAttribute("nametag")) 
+            {
+              WatchedAttributes.SetString("nametag", PlacedByItemStack.Attributes.GetAsString("nametag"));
+            }
 
             WatchedAttributes.MarkPathDirty(MannequinTreeKey);
         }
@@ -324,6 +329,10 @@ namespace MannequinStand
 
             ItemStack itemStack = new ItemStack(entityAsItem);
             itemStack.Attributes[MannequinTreeKey] = mannequinTreeKey.Clone();
+            if (WatchedAttributes.HasAttribute("nametag"))
+            {
+                itemStack.Attributes.SetString("nametag", NameTag);
+            }
             itemStack.Collectible.Code.EndVariant().Replace(itemStack.Collectible.Code.EndVariant(), MannequinMaterial);
 
             if (!byEntity.TryGiveItemStack(itemStack))
@@ -455,6 +464,12 @@ namespace MannequinStand
             { 
                 return "Error (Pick up)";
             }
+
+            if (WatchedAttributes.HasAttribute("nametag")) 
+            {
+                return NameTag;
+            }
+
             return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + mannequinTreeKey.GetString(BaseSkin)));
         }
 
