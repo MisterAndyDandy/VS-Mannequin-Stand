@@ -64,17 +64,7 @@ namespace MannequinStand.Client
             rightOtherSlotBoundsLeftHand.FixedRightOf(rightSlotBounds, 10.0);
             rightOtherSlotBoundsRightHand.FixedRightOf(rightSlotBounds, 10.0);
 
-            string name = entityMannequin.GetName();
-            ITreeAttribute attribute = entityMannequin.WatchedAttributes.GetOrAddTreeAttribute("mannequin");
-            string original = Lang.GetMatching("mannequins:item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + attribute.GetAsString("baseskin")));
-
-            if (name.Length > original.Length)
-            {
-                int num = original.Length;
-                original = name[..num];
-            }
-
-            SingleComposer = capi.Gui.CreateCompo("mannequincontents" + owningEntity.EntityId, dialogBounds).AddShadedDialogBG(bgBounds).AddDialogTitleBar(original, onClose: OnTitleBarClose);
+            SingleComposer = capi.Gui.CreateCompo("mannequincontents" + owningEntity.EntityId, dialogBounds).AddShadedDialogBG(bgBounds).AddDialogTitleBar(GetDialogName(entityMannequin), onClose: OnTitleBarClose);
             SingleComposer.BeginChildElements(bgBounds);
 
             SingleComposer
@@ -94,6 +84,14 @@ namespace MannequinStand.Client
               .EndChildElements();
 
             SingleComposer.Compose();
+        }
+        public string GetDialogName(EntityMannequin entityMannequin)
+        {
+            // Get the name of the entity mannequin
+            string name = entityMannequin.GetName();
+
+            // Ensure the returned name does not exceed the length of the original name
+            return name.Length > 30 ? name.Substring(0, 30) : name;
         }
 
         public override void OnFinalizeFrame(float dt)

@@ -1,102 +1,59 @@
 ﻿using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using MannequinStand.Util;
 
 namespace MannequinStand
-{
+
+{   /// <summary>
+    /// Represents the core functionality of the Mannequin Stand mod.
+    /// </summary>
     class MannequinStandCore : ModSystem
     {
+        NameTagHandler Handler = new NameTagHandler();
 
+        /// <summary>
+        /// Starts the Mannequin Stand mod by registering entities and items.
+        /// </summary>
+        /// <param name="api">The core API instance.</param>
         public override void Start(ICoreAPI api)
         {
             base.Start(api);
+            RegisterClass(api);
+        }
+
+        /// <summary>
+        /// Register class required by the Mannequin Stand mod.
+        /// </summary>
+        /// <param name="api">The core API instance.</param>
+        private void RegisterClass(ICoreAPI api)
+        {
+            
             api.RegisterEntity("EntityMannequinStand", typeof(EntityMannequin));
+
+      
             api.RegisterItemClass("ItemMannequinStand", typeof(ItemMannequin));
+
+         
             api.RegisterItemClass("ItemNameTag", typeof(ItemNameTag));
         }
 
+        /// <summary>
+        /// Starts the server-side logic for managing chat commands.
+        /// </summary>
+        /// <param name="api">The core server API.</param>
         public override void StartServerSide(ICoreServerAPI api)
         {
             IChatCommandApi chatCommands = api.ChatCommands;
             CommandArgumentParsers parsers = api.ChatCommands.Parsers;
-            
+
             chatCommands
                 .Create("nametag")
-                .WithDescription( Lang.Get("mannequins:command-nametag-desc"))
-                .WithArgs(new ICommandArgumentParser[] { parsers.All("custom name") })
-                .RequiresPrivilege(Privilege.chat)
-                .HandleWith(NameTagCommand);
-        }
-
-        public TextCommandResult NameTagCommand(TextCommandCallingArgs args)
-        {
-            IPlayer player = args.Caller.Player;
-            EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
-            ItemStack itemStack = player.Entity.ActiveHandItemSlot?.Itemstack;
-
-            if (entityMannequin != null && !player.Entity.World.Claims.TryAccess(player, args.Caller.Pos.AsBlockPos, EnumBlockAccessFlags.BuildOrBreak))
-            {
-                return TextCommandResult.Success(Lang.GetMatching("", entityMannequin.GetName()));
-            }
-
-            if (player.Role.Code.StartsWith("admin") && SetEntityNameTag(entityMannequin, args.Parsers[0].GetValue().ToString()))
-            {
-                return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-success-entity"));
-            }
-         
-            if (GetActiveHandSlot(player.Entity.ActiveHandItemSlot)) 
-            {
-                if (IsNameTag(player.Entity.ActiveHandItemSlot.Itemstack))
-                {
-                    if (GetOffHandSlot(player.Entity.LeftHandItemSlot))
-                    {
-                        if (SetItemNameTag(player, itemStack, args.Parsers[0].GetValue().ToString()))
-                        {
-                            return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-success-item"));
-                        }
-                    }
-                    else 
-                    {
-                        return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-missing-item"));
-                    }
-                }
-            }
-
-            return TextCommandResult.Success();
-        }
-
-        public bool GetActiveHandSlot(ItemSlot rightHand) 
-        {
-            return !rightHand.Empty;
-        }
-
-        public bool GetOffHandSlot(ItemSlot leftHand)
-        {
-            return leftHand.Empty == false ? leftHand.Itemstack.Collectible.Code.FirstCodePart().Equals("inkandquill") : false;
-        }
-
-        public bool IsNameTag(ItemStack itemStack) 
-        {
-            return itemStack.Collectible.Code.FirstCodePart().Equals("nametag");
-        }
-
-        public bool SetEntityNameTag(EntityMannequin mannequin, string name)
-        {
-            if (mannequin != null)
-            {
-                mannequin.WatchedAttributes.SetString("nametag", name);
-                return true;
-            }
-            return false;
-        }
-
-        public bool SetItemNameTag(IPlayer player, ItemStack itemStack, string name)
-        {
-            itemStack.Attributes.SetString("nametag", name);
-            player.Entity.ActiveHandItemSlot.Itemstack = itemStack;
-            player.InventoryManager.BroadcastHotbarSlot();
-            player.Entity.ActiveHandItemSlot.MarkDirty();
-            return true;
+                .WithDescription(Lang.Get("mannequins:command-nametag-desc")) 
+                .WithArgs(new ICommandArgumentParser[] { parsers.All("custom name") }) 
+                .RequiresPrivilege(Privilege.chat) 
+                .HandleWith(Handler.NameTagCommand);
         }
     }
 }

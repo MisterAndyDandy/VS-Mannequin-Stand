@@ -466,25 +466,29 @@ namespace MannequinStand
 
         public override string GetName()
         {
+            // Get the current language setting
             ISettingsClass<string> en = (Api as ICoreClientAPI)?.Settings.String;
             bool value = en.Get("language") == "en";
 
-
-            if (Code == GetAssetLocation("mannequins", "woondenmannequinstand")) 
-            { 
+            // Check if the entity is a wooden mannequin
+            if (Code == GetAssetLocation("mannequins", "woondenmannequinstand"))
+            {
                 return "Error (Pick up)";
             }
 
-            if (WatchedAttributes.HasAttribute("nametag")) 
+            // Check if the entity has a name tag
+            if (WatchedAttributes.HasAttribute("nametag"))
             {
                 return NameTag;
             }
 
+            // Check if the base skin is "baldcypress" and the language is English
             if (mannequinTreeKey["baseskin"].GetValue().Equals("baldcypress") && value)
             {
                 return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", "Bald Cypress");
             }
 
+            // If none of the above conditions are met, retrieve the name based on the base skin
             return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + mannequinTreeKey.GetString(BaseSkin)));
         }
 
