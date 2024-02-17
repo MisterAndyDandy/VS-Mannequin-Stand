@@ -1,1 +1,1 @@
-# VS - BlackSmithEnhancements
+# VS - Mannequin Stand
