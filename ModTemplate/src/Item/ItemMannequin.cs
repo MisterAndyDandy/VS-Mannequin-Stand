@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -34,6 +35,7 @@ namespace MannequinStand
                 itemStack = slot.TakeOut(1);
                 slot.MarkDirty();
             }
+
             string name = this.FirstCodePart();
             EntityProperties type = byEntity.World.GetEntityType(new AssetLocation(this.Code.Domain, name));
          
@@ -63,13 +65,28 @@ namespace MannequinStand
 
             entity.Pos.SetFrom(entity.ServerPos);
 
-            byEntity.World.PlaySoundAt(new AssetLocation("game:sounds/block/torch"), entity, player);
+            byEntity.World.PlaySoundAt(new AssetLocation("game:sounds/block/planks"), entity, player);
             byEntity.World.SpawnEntity(entity);
             handling = EnumHandHandling.PreventDefaultAction;
         }
 
         public override string GetHeldItemName(ItemStack itemStack)
         {
+            ITreeAttribute attribute = itemStack.Attributes;
+
+            ISettingsClass<string> en = (api as ICoreClientAPI)?.Settings.String;
+            bool value = en.Get("language") == "en";
+
+            if (attribute.HasAttribute("nametag"))
+            {
+                return attribute.GetAsString("nametag");
+            }
+     
+            if (Code.EndVariant() == "baldcypress" && value) 
+            {
+                return Lang.GetMatching(Code.Domain + ":item-mannequinstand" + ": {0}", "Bald Cypress");
+            }
+
             return Lang.GetMatching(Code.Domain + ":item-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + Code.EndVariant()));
         }
 

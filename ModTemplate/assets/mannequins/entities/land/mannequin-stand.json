@@ -2,7 +2,7 @@
 	"code": "mannequinstand",
 	"class": "EntityMannequinStand",
 	"hitboxSize": {
-		"x": 1,
+		"x": 0.7,
 		"y": 2
 	},
 	"attributes": {

@@ -1,11 +1,6 @@
 {
 	"code": "mannequinstand",
 	"class": "ItemMannequinStand",
-	"attributes": {
-		"handbook": {
-			"groupBy": [ "mannequinstand-{material}" ]
-		}
-	},
 	"variantgroups": [
 		{
 			"code": "wood",
@@ -27,8 +22,8 @@
 	"heldTpIdleAnimation": "holdunderarm",
 	"maxstacksize": 1,
 	"combustibleProps": {
-		"burnTemperature": 600,
-		"burnDuration": 30
+		"burnTemperature": 300,
+		"burnDuration": 360
 	},
 	"guiTransform": {
 		"translation": {

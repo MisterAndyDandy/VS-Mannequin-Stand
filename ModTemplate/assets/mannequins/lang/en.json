@@ -3,6 +3,16 @@
 	"mannequins:item-creature-woondenmannequinstand": "Wooden Mannequin",
 	"mannequins:item-woondenmannequinstand": "Wooden Mannequin",
 
-	"mannequins:item-creature-mannequinstand: {0}": "Mannequin {0}",
-	"mannequins:item-mannequinstand: {0}": "Mannequin {0}"
+	"mannequins:item-creature-mannequinstand: {0}": "{0} Mannequin",
+	"mannequins:item-mannequinstand: {0}": "{0} Mannequin ",
+
+	"mannequins:item-nametag: {0}": "Name tag {0}",
+
+
+
+	"mannequins:command-nametag-desc": "used to set mannequin name to custom name.",
+	"mannequins:command-nametag-success-entity": "You have successfully written on a mannequin",
+	"mannequins:command-nametag-success-item": "You have successfully written on a name tag",
+	"mannequins:command-nametag-missing-item": "Ink and quill needs to be in your off hand",
+	"mannequins:command-nametag-missing-permission: {0}": "You don't have permission to set this {0}"
 }

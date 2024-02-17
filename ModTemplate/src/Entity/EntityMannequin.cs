@@ -289,6 +289,16 @@ namespace MannequinStand
             {
                 ChangeToNextPose();
             }
+
+            if(withSlot.Itemstack.Collectible is ItemNameTag)
+            {
+                if (withSlot.Itemstack.Attributes.HasAttribute("nametag")) 
+                {
+                    WatchedAttributes.SetString("nametag", withSlot.Itemstack.Attributes.GetAsString("nametag"));
+                    withSlot.TakeOut(1);
+                    withSlot.MarkDirty();
+                }
+            }
         }
 
         protected virtual bool TryTakeItemFromEntity(EntityAgent byEntity, ItemSlot intoSlot)
@@ -329,10 +339,12 @@ namespace MannequinStand
 
             ItemStack itemStack = new ItemStack(entityAsItem);
             itemStack.Attributes[MannequinTreeKey] = mannequinTreeKey.Clone();
+
             if (WatchedAttributes.HasAttribute("nametag"))
             {
                 itemStack.Attributes.SetString("nametag", NameTag);
             }
+
             itemStack.Collectible.Code.EndVariant().Replace(itemStack.Collectible.Code.EndVariant(), MannequinMaterial);
 
             if (!byEntity.TryGiveItemStack(itemStack))
@@ -364,14 +376,7 @@ namespace MannequinStand
 
         protected virtual void ToggleInventoryDialog(IPlayer player)
         {
-            if (GuiInventoryDialog?.IsOpened() ?? false)
-            {
-                GuiInventoryDialog?.TryClose();
-            }
-            else
-            {
-                TryOpenInventory(player);
-            }
+            TryOpenInventory(player);
         }
 
         protected virtual bool TryOpenInventory(IPlayer player)
@@ -393,6 +398,7 @@ namespace MannequinStand
                 return false;
             }
 
+            player.Entity.StopAnimation("interactstatic");
             player.InventoryManager.OpenInventory(GearInventory);
             capi.Network.SendEntityPacket(EntityId, packetId_OpenInventory);
             return true;
@@ -460,6 +466,10 @@ namespace MannequinStand
 
         public override string GetName()
         {
+            ISettingsClass<string> en = (Api as ICoreClientAPI)?.Settings.String;
+            bool value = en.Get("language") == "en";
+
+
             if (Code == GetAssetLocation("mannequins", "woondenmannequinstand")) 
             { 
                 return "Error (Pick up)";
@@ -468,6 +478,11 @@ namespace MannequinStand
             if (WatchedAttributes.HasAttribute("nametag")) 
             {
                 return NameTag;
+            }
+
+            if (mannequinTreeKey["baseskin"].GetValue().Equals("baldcypress") && value)
+            {
+                return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", "Bald Cypress");
             }
 
             return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + mannequinTreeKey.GetString(BaseSkin)));

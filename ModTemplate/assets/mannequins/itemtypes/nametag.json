@@ -1,10 +1,63 @@
 {
   "code": "nametag",
   "class": "ItemNameTag",
-  "shape": { "base": "game:item/gear-rusty" },
+  "shape": { "base": "mannequins:item/nametag" },
+  "textures": {
+    "words": { "base": "mannequins:item/nametag/words" },
+    "paper": { "base": "mannequins:item/nametag/paper" }
+  },
   "creativeinventory": {
     "general": [ "*" ],
     "items": [ "*" ]
   },
-  "maxstacksize": 1
+  "maxstacksize": 1,
+  "guiTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 44,
+      "y": 25,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.48,
+      "y": -0,
+      "z": 0.5
+    },
+    "scale": 4.1
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.9,
+      "y": -0.15,
+      "z": -0.62
+    },
+    "rotation": {
+      "x": 0,
+      "y": -90,
+      "z": 0
+    },
+    "scale": 0.8
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": -0.02,
+      "z": 0.5299
+    },
+    "scale": 3.55
+  }
 }

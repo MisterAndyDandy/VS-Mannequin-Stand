@@ -36,10 +36,10 @@ namespace MannequinStand
 
             if (attribute.HasAttribute("nametag")) 
             {
-                return attribute.GetAsString("nametag");
+                return Lang.GetMatching("mannequins:item-nametag: {0}", $"({attribute.GetAsString("nametag")})");
             }
 
-            return base.GetHeldItemName(itemStack);
+            return Lang.GetMatching("mannequins:item-nametag: {0}", "".RemoveDiacritics());
         }
 
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot)

@@ -1,11 +1,6 @@
-﻿using ProperVersion;
-using System;
-using System.Xml.Linq;
-using Vintagestory.API.Client;
-using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
+﻿using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace MannequinStand
 {
@@ -24,48 +19,84 @@ namespace MannequinStand
         {
             IChatCommandApi chatCommands = api.ChatCommands;
             CommandArgumentParsers parsers = api.ChatCommands.Parsers;
-
+            
             chatCommands
                 .Create("nametag")
-                .WithDescription("")
-                .WithArgs(new ICommandArgumentParser[] { parsers.All("nametag") })
+                .WithDescription( Lang.Get("mannequins:command-nametag-desc"))
+                .WithArgs(new ICommandArgumentParser[] { parsers.All("custom name") })
                 .RequiresPrivilege(Privilege.chat)
                 .HandleWith(NameTagCommand);
         }
 
-        private TextCommandResult NameTagCommand(TextCommandCallingArgs args)
+        public TextCommandResult NameTagCommand(TextCommandCallingArgs args)
         {
             IPlayer player = args.Caller.Player;
+            EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
+            ItemStack itemStack = player.Entity.ActiveHandItemSlot?.Itemstack;
 
-            if (!(player is IServerPlayer serverPlayer))
-                return TextCommandResult.Success();
-
-            if (!player.Entity.World.Claims.TryAccess(player, args.Caller.Pos.AsBlockPos, EnumBlockAccessFlags.BuildOrBreak))
+            if (entityMannequin != null && !player.Entity.World.Claims.TryAccess(player, args.Caller.Pos.AsBlockPos, EnumBlockAccessFlags.BuildOrBreak))
             {
-                serverPlayer.SendMessage(0, $"You don't have permission to set {player?.CurrentEntitySelection?.Entity.GetName()}", EnumChatType.OwnMessage);
-                return TextCommandResult.Success();
+                return TextCommandResult.Success(Lang.GetMatching("", entityMannequin.GetName()));
             }
 
-            if (player.Entity.ActiveHandItemSlot.Empty)
-                return TextCommandResult.Success();
-
-            ItemStack nameTagStack = player.Entity.ActiveHandItemSlot.Itemstack;
-
-            SetItemNameTag(player, nameTagStack, args.Parsers[0].GetValue().ToString());
+            if (player.Role.Code.StartsWith("admin") && SetEntityNameTag(entityMannequin, args.Parsers[0].GetValue().ToString()))
+            {
+                return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-success-entity"));
+            }
+         
+            if (GetActiveHandSlot(player.Entity.ActiveHandItemSlot)) 
+            {
+                if (IsNameTag(player.Entity.ActiveHandItemSlot.Itemstack))
+                {
+                    if (GetOffHandSlot(player.Entity.LeftHandItemSlot))
+                    {
+                        if (SetItemNameTag(player, itemStack, args.Parsers[0].GetValue().ToString()))
+                        {
+                            return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-success-item"));
+                        }
+                    }
+                    else 
+                    {
+                        return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-missing-item"));
+                    }
+                }
+            }
 
             return TextCommandResult.Success();
         }
 
-        public void SetItemNameTag(IPlayer player, ItemStack nameTagStack, string name)
+        public bool GetActiveHandSlot(ItemSlot rightHand) 
         {
-            if (!(nameTagStack?.Item is ItemNameTag itemNameTag))
-                return;
+            return !rightHand.Empty;
+        }
 
-            nameTagStack = new ItemStack(itemNameTag);
-            nameTagStack.Attributes.SetString("nametag", name);
-            player.Entity.ActiveHandItemSlot.Itemstack = nameTagStack;
+        public bool GetOffHandSlot(ItemSlot leftHand)
+        {
+            return leftHand.Empty == false ? leftHand.Itemstack.Collectible.Code.FirstCodePart().Equals("inkandquill") : false;
+        }
+
+        public bool IsNameTag(ItemStack itemStack) 
+        {
+            return itemStack.Collectible.Code.FirstCodePart().Equals("nametag");
+        }
+
+        public bool SetEntityNameTag(EntityMannequin mannequin, string name)
+        {
+            if (mannequin != null)
+            {
+                mannequin.WatchedAttributes.SetString("nametag", name);
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetItemNameTag(IPlayer player, ItemStack itemStack, string name)
+        {
+            itemStack.Attributes.SetString("nametag", name);
+            player.Entity.ActiveHandItemSlot.Itemstack = itemStack;
             player.InventoryManager.BroadcastHotbarSlot();
             player.Entity.ActiveHandItemSlot.MarkDirty();
+            return true;
         }
     }
 }

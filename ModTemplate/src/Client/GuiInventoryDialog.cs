@@ -1,9 +1,12 @@
 ﻿using System;
+using HarmonyLib;
 using MannequinStand.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace MannequinStand.Client
 {
@@ -38,7 +41,7 @@ namespace MannequinStand.Client
 
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
-
+        
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.LeftMiddle).WithFixedAlignmentOffset(GuiStyle.DialogToScreenPadding, 0.0);
 
             double pad = GuiElementItemSlotGridBase.unscaledSlotPadding;
@@ -47,7 +50,7 @@ namespace MannequinStand.Client
             ElementBounds leftArmorSlotBoundsBody = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0.0, 20.0 + pad + 102.0, 1, 1).FixedGrow(0.0, pad);
             ElementBounds leftArmorSlotBoundsLegs = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0.0, 20.0 + pad + 204.0, 1, 1).FixedGrow(0.0, pad);
           
-                leftSlotBounds.FixedRightOf(leftArmorSlotBoundsHead, 10.0).FixedRightOf(leftArmorSlotBoundsBody, 10.0).FixedRightOf(leftArmorSlotBoundsLegs, 10.0);
+            leftSlotBounds.FixedRightOf(leftArmorSlotBoundsHead, 10.0).FixedRightOf(leftArmorSlotBoundsBody, 10.0).FixedRightOf(leftArmorSlotBoundsLegs, 10.0);
             
             ElementBounds rightSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0.0, 20.0 + pad, 1, 6).FixedGrow(0.0, pad);
             rightSlotBounds.FixedRightOf(leftSlotBounds, 10.0);
@@ -61,8 +64,17 @@ namespace MannequinStand.Client
             rightOtherSlotBoundsLeftHand.FixedRightOf(rightSlotBounds, 10.0);
             rightOtherSlotBoundsRightHand.FixedRightOf(rightSlotBounds, 10.0);
 
+            string name = entityMannequin.GetName();
+            ITreeAttribute attribute = entityMannequin.WatchedAttributes.GetOrAddTreeAttribute("mannequin");
+            string original = Lang.GetMatching("mannequins:item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + attribute.GetAsString("baseskin")));
 
-            SingleComposer = capi.Gui.CreateCompo("mannequincontents" + owningEntity.EntityId, dialogBounds).AddShadedDialogBG(bgBounds).AddDialogTitleBar(Lang.Get(this.owningEntity.GetName()), onClose: OnTitleBarClose);
+            if (name.Length > original.Length)
+            {
+                int num = original.Length;
+                original = name[..num];
+            }
+
+            SingleComposer = capi.Gui.CreateCompo("mannequincontents" + owningEntity.EntityId, dialogBounds).AddShadedDialogBG(bgBounds).AddDialogTitleBar(original, onClose: OnTitleBarClose);
             SingleComposer.BeginChildElements(bgBounds);
 
             SingleComposer
