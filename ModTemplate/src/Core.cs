@@ -4,6 +4,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using MannequinStand.Util;
 using Vintagestory.API.Common.CommandAbbr;
+using Vintagestory.API.Client;
 
 namespace MannequinStand
 

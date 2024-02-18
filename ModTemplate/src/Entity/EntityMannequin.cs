@@ -195,9 +195,9 @@ namespace MannequinStand
 
             mannequinTreeKey.SetString(BaseSkin, itemStackTree.GetString(BaseSkin, PlacedByItemStack.Collectible.Code.EndVariant()));
 
-            if(PlacedByItemStack.Attributes.HasAttribute("nametag")) 
+            if(PlacedByItemStack.Attributes.HasAttribute("name")) 
             {
-              WatchedAttributes.SetString("nametag", PlacedByItemStack.Attributes.GetAsString("nametag"));
+              WatchedAttributes.SetString("name", PlacedByItemStack.Attributes.GetAsString("name"));
             }
 
             WatchedAttributes.MarkPathDirty(MannequinTreeKey);
@@ -290,20 +290,29 @@ namespace MannequinStand
                 ChangeToNextPose();
             }
 
-            if (HasTool(withSlot) && IsNameTagItem(withSlot) && !HasEntityNameAttribute())
+            if (IsNameTagItem(withSlot) && !HasEntityNameAttribute())
             {
                 HandleNameTagInteraction(withSlot);
             }
-            else { }
+
+            if(HasTool(withSlot))
+            {
+
+            }
         }
 
         private bool HasTool(ItemSlot slot) {
-            return slot.Itemstack.Collectible.Tool is EnumTool.Knife or EnumTool.Shears;
+            return slot.Itemstack?.Collectible?.Tool is EnumTool.Knife or EnumTool.Shears;
+        }
+
+        private bool HasEntityNameAttribute()
+        {
+            return WatchedAttributes.HasAttribute("name");
         }
 
         private bool IsWrench(ItemSlot slot)
         {
-            return slot.Itemstack.Collectible is ItemWrench;
+            return slot?.Itemstack?.Collectible is ItemWrench;
         }
 
         private bool IsNameTagItem(ItemSlot slot)
@@ -311,9 +320,9 @@ namespace MannequinStand
             return slot.Itemstack.Attributes.HasAttribute("name");
         }
 
-        private bool HasEntityNameAttribute()
+        private void HandleRemoveNameTagInteraction() 
         {
-            return WatchedAttributes.HasAttribute("name");
+            ItemStack itemStack = WatchedAttributes.GetItemstack("nameTagItemStack");
         }
 
         private void HandleNameTagInteraction(ItemSlot slot)

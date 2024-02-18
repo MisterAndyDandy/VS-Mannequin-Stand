@@ -1,8 +1,10 @@
-﻿using System.Xml.Linq;
+﻿using Microsoft.VisualBasic;
+using System.Xml.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace MannequinStand.Util
 {
@@ -16,13 +18,19 @@ namespace MannequinStand.Util
         /// <returns>The result of the command execution.</returns>
         public TextCommandResult SetNameTagCommand(TextCommandCallingArgs args)
         {
+            ICoreAPI api = args.Caller.Entity.Api;
+            if (api == null) return TextCommandResult.Success();
+
             IPlayer player = args.Caller.Player;
+            if(player == null) return TextCommandResult.Success(); 
+            
             EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
+
             ItemStack itemStack = player.Entity.ActiveHandItemSlot?.Itemstack;
 
-            if (entityMannequin != null && !HasBuildOrBreakPermission(player, args.Caller.Pos.AsBlockPos))
+            if (entityMannequin != null && !HasBuildOrBreakPermission(api, player, args.Caller.Pos.AsBlockPos))
             {
-                return TextCommandResult.Success(Lang.GetMatching("mannequins:command-nametag-set-name-missing-permission: {0}", entityMannequin.GetName()));
+                return TextCommandResult.Error(Lang.GetMatching("mannequins:command-nametag-set-name-missing-permission: {0}", entityMannequin.GetName()));
             }
 
             if (HasAdminPrivilege(player) && SetEntityNameTag(entityMannequin, args.Parsers[0].GetValue().ToString()))
@@ -34,11 +42,11 @@ namespace MannequinStand.Util
             {
                 if (!HasInkAndQuillInOffHand(player.Entity.LeftHandItemSlot))
                 {
-                    return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-set-name-missing-item"));
+                    return TextCommandResult.Error(Lang.Get("mannequins:command-nametag-set-name-missing-item"));
                 }
 
-                if (SetItemNameTag(player, itemStack, args.Parsers[0].GetValue().ToString()))
-                {
+                if (SetItemNameTag(api, player, itemStack, args.Parsers[0].GetValue().ToString()))
+                { 
                     return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-set-name-item"));
                 }
             }
@@ -53,26 +61,26 @@ namespace MannequinStand.Util
         /// <returns>The result of the command execution.</returns>
         public TextCommandResult RemoveNameTagCommand(TextCommandCallingArgs args)
         {
-            IPlayer player = args.Caller.Player;
-            EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
-            ItemStack itemStack = player.Entity.ActiveHandItemSlot?.Itemstack;
+            ICoreAPI api = args.Caller.Entity.Api;
+            if (api == null) return TextCommandResult.Success();
 
-            if (entityMannequin != null && !HasBuildOrBreakPermission(player, args.Caller.Pos.AsBlockPos))
+            IPlayer player = args.Caller.Player;
+            if (player == null) return TextCommandResult.Success();
+
+            EntityMannequin entityMannequin = player.CurrentEntitySelection?.Entity as EntityMannequin;
+
+            if (entityMannequin != null && !HasBuildOrBreakPermission(api, player, args.Caller.Pos.AsBlockPos))
             {
                 return TextCommandResult.Success(Lang.GetMatching("mannequins:command-nametag-remove-name-missing-permission: {0}", entityMannequin.GetName()));
             }
 
             if (HasAdminPrivilege(player) && HasEntityNameTag(entityMannequin))
             {
-                if (RemoveAttribute(entityMannequin, player))
+                if (RemoveAttribute(api, entityMannequin, player))
                 {
                     return TextCommandResult.Success(Lang.Get("mannequins:command-nametag-remove-name-entity"));
                 }
-                else
-                {
-                    return TextCommandResult.Success(Lang.GetMatching("mannequins:command-nametag-remove-name-missing: {0}", itemStack?.Item.Tool is EnumTool.Knife or EnumTool.Shears));
-                }
-            }
+            }        
 
             return TextCommandResult.Success();
         }
@@ -83,24 +91,31 @@ namespace MannequinStand.Util
         /// <param name="mannequin">The entity mannequin from which to remove the attribute.</param>
         /// <param name="player">The player to receive the associated item.</param>
         /// <returns>True if the attribute was successfully removed; otherwise, false.</returns>
-        private bool RemoveAttribute(EntityMannequin mannequin, IPlayer player)
+        private bool RemoveAttribute(ICoreAPI api, EntityMannequin mannequin, IPlayer player)
         {
             SyncedTreeAttribute attributes = mannequin.WatchedAttributes;
-     
+
             if (attributes.HasAttribute("nameTagItemStack"))
             {
-                ItemStack itemStack = attributes.GetItemstack("nameTagItemStack");
+                ItemStack itemStack = attributes.GetItemstack("nameTagItemStack").Clone();
                 itemStack.StackSize = 1;
-                itemStack.ResolveBlockOrItem(player.Entity.Api.World);
-                itemStack.Attributes.RemoveAttribute("name");
-                player.InventoryManager.TryGiveItemstack(itemStack, true);
-                player.InventoryManager.BroadcastHotbarSlot();
-              
-                return true;
+
+                if (!player.InventoryManager.TryGiveItemstack(itemStack))
+                {
+                    api.World.SpawnItemEntity(itemStack, mannequin.Pos.AsBlockPos.ToVec3d().Add(0.5, 0.5, 0.5));
+                }
+
+                mannequin.WatchedAttributes.RemoveAttribute("name");
+                attributes.RemoveAttribute("name");
+                attributes.RemoveAttribute("nameTagItemStack");
+                
+            }
+            else 
+            {
+                mannequin.WatchedAttributes.RemoveAttribute("name");
             }
 
-            mannequin.WatchedAttributes.RemoveAttribute("name");
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -109,9 +124,9 @@ namespace MannequinStand.Util
         /// <param name="player">The player to check.</param>
         /// <param name="pos">The position to check.</param>
         /// <returns><c>true</c> if the player has build or break permission, <c>false</c> otherwise.</returns>
-        private bool HasBuildOrBreakPermission(IPlayer player, BlockPos pos)
+        private bool HasBuildOrBreakPermission(ICoreAPI api, IPlayer player, BlockPos pos)
         {
-            return player.Entity.World.Claims.TryAccess(player, pos, EnumBlockAccessFlags.BuildOrBreak);
+            return api.World.Claims.TryAccess(player, pos, EnumBlockAccessFlags.BuildOrBreak);
         }
 
         /// <summary>
@@ -177,29 +192,27 @@ namespace MannequinStand.Util
         /// <param name="itemStack">The item stack to modify.</param>
         /// <param name="name">The name to set as the name tag.</param>
         /// <returns>True if the name tag was successfully set and the modified item stack was given back to the player; otherwise, false.</returns>
-        private bool SetItemNameTag(IPlayer player, ItemStack itemStack, string name)
+        private bool SetItemNameTag(ICoreAPI api, IPlayer player, ItemStack itemStack, string name)
         {
-            if(itemStack == null || itemStack.StackSize <= 0)
-{
-                return false;
-            }
+            if(itemStack != null && itemStack.StackSize > 0)
+            {
+                ItemStack modifiedStack = itemStack.Clone();
+                modifiedStack.StackSize = 1;
+                modifiedStack.Attributes.SetString("name", name);
 
-            ItemStack modifiedStack = itemStack.Clone();
-            modifiedStack.StackSize = 1;
-            modifiedStack.Attributes.SetString("name", name);
+                player.InventoryManager.ActiveHotbarSlot.TakeOut(1);
 
-            player.InventoryManager.ActiveHotbarSlot.TakeOut(1);
-
-            if (player.InventoryManager.TryGiveItemstack(modifiedStack))
-            {   // Mark the active hotbar slot as dirty
+                if (!player.InventoryManager.TryGiveItemstack(modifiedStack))
+                {
+                    api.World.SpawnItemEntity(itemStack, player.Entity.Pos.AsBlockPos.ToVec3d().Add(0.5, 0.5, 0.5));
+                    api.World.PlaySoundFor(new AssetLocation(), player, false, 1, 0.5f);
+                }
 
                 player.InventoryManager.ActiveHotbarSlot.MarkDirty();
 
-                // Broadcast the hotbar slot to update the client
                 player.InventoryManager.BroadcastHotbarSlot();
-
-                return true;
             }
+
 
             return false;
 

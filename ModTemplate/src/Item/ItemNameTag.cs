@@ -26,7 +26,7 @@ namespace MannequinStand
         /// <param name="handling">The handling mode of the interaction.</param>
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
-            if (blockSel == null && entitySel == null) return;
+            if (blockSel == null || entitySel == null) return;
 
             IPlayer player = byEntity.World.PlayerByUid((byEntity as EntityPlayer)?.PlayerUID);
 
