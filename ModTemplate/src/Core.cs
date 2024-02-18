@@ -3,6 +3,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using MannequinStand.Util;
+using Vintagestory.API.Common.CommandAbbr;
 
 namespace MannequinStand
 
@@ -11,7 +12,7 @@ namespace MannequinStand
     /// </summary>
     class MannequinStandCore : ModSystem
     {
-        NameTagHandler Handler = new NameTagHandler();
+        private NameTagHandler Handler = new NameTagHandler();
 
         /// <summary>
         /// Starts the Mannequin Stand mod by registering entities and items.
@@ -50,10 +51,16 @@ namespace MannequinStand
 
             chatCommands
                 .Create("nametag")
-                .WithDescription(Lang.Get("mannequins:command-nametag-desc")) 
-                .WithArgs(new ICommandArgumentParser[] { parsers.All("custom name") }) 
-                .RequiresPrivilege(Privilege.chat) 
-                .HandleWith(Handler.NameTagCommand);
+                .WithDescription(Lang.Get("mannequins:command-nametag-desc"))
+                .RequiresPrivilege(Privilege.chat)
+                .BeginSubCommand("set")
+                    .WithDescription(Lang.Get("mannequins:subcommand-set-desc")) // Description for the 'set' subcommand
+                    .WithArgs(new ICommandArgumentParser[] { parsers.All("set name") }) // Arguments for the 'set' subcommand
+                    .HandleWith(Handler.SetNameTagCommand) // Handler method for the 'set' subcommand
+                .EndSub() // End the 'set' subcommand
+                .BeginSubCommand("remove")
+                    .WithDescription(Lang.Get("mannequins:subcommand-remove-desc")) // Description for the 'remove' subcommand
+                    .HandleWith(Handler.RemoveNameTagCommand); // Handler method for the 'remove' subcommand
         }
     }
 }

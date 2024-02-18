@@ -34,7 +34,7 @@ namespace MannequinStand
 
         protected virtual string inventoryId => "gear-" + EntityId;
 
-        public string NameTag => WatchedAttributes.GetAsString("nametag");
+        public string Name => WatchedAttributes.GetAsString("name");
 
         protected int CurPose
         {
@@ -285,20 +285,43 @@ namespace MannequinStand
 
         protected virtual void OnInteractWhileStandingWithItem(EntityAgent byEntity, ItemSlot withSlot, Vec3d hitPosition, EnumInteractMode mode)
         {
-            if (withSlot.Itemstack.Collectible is ItemWrench)
+            if (IsWrench(withSlot))
             {
                 ChangeToNextPose();
             }
 
-            if(withSlot.Itemstack.Collectible is ItemNameTag)
+            if (HasTool(withSlot) && IsNameTagItem(withSlot) && !HasEntityNameAttribute())
             {
-                if (withSlot.Itemstack.Attributes.HasAttribute("nametag")) 
-                {
-                    WatchedAttributes.SetString("nametag", withSlot.Itemstack.Attributes.GetAsString("nametag"));
-                    withSlot.TakeOut(1);
-                    withSlot.MarkDirty();
-                }
+                HandleNameTagInteraction(withSlot);
             }
+            else { }
+        }
+
+        private bool HasTool(ItemSlot slot) {
+            return slot.Itemstack.Collectible.Tool is EnumTool.Knife or EnumTool.Shears;
+        }
+
+        private bool IsWrench(ItemSlot slot)
+        {
+            return slot.Itemstack.Collectible is ItemWrench;
+        }
+
+        private bool IsNameTagItem(ItemSlot slot)
+        {
+            return slot.Itemstack.Attributes.HasAttribute("name");
+        }
+
+        private bool HasEntityNameAttribute()
+        {
+            return WatchedAttributes.HasAttribute("name");
+        }
+
+        private void HandleNameTagInteraction(ItemSlot slot)
+        {
+            WatchedAttributes.SetItemstack("nameTagItemStack", slot.Itemstack);
+            WatchedAttributes.SetString("name", slot.Itemstack.Attributes.GetAsString("name"));
+            slot.TakeOut(1);
+            slot.MarkDirty();
         }
 
         protected virtual bool TryTakeItemFromEntity(EntityAgent byEntity, ItemSlot intoSlot)
@@ -340,9 +363,9 @@ namespace MannequinStand
             ItemStack itemStack = new ItemStack(entityAsItem);
             itemStack.Attributes[MannequinTreeKey] = mannequinTreeKey.Clone();
 
-            if (WatchedAttributes.HasAttribute("nametag"))
+            if (WatchedAttributes.HasAttribute("name"))
             {
-                itemStack.Attributes.SetString("nametag", NameTag);
+                itemStack.Attributes.SetString("name", Name);
             }
 
             itemStack.Collectible.Code.EndVariant().Replace(itemStack.Collectible.Code.EndVariant(), MannequinMaterial);
@@ -441,7 +464,7 @@ namespace MannequinStand
         }
 
         #region Lights
-        public void AdjustLightLevelForItemSlot(int slotNumber, ref byte[] __result)
+        private void AdjustLightLevelForItemSlot(int slotNumber, ref byte[] __result)
         {
             byte[] clipon = gearInv?[slotNumber].Itemstack.Collectible.LightHsv;
             if (clipon == null) return;
@@ -466,29 +489,33 @@ namespace MannequinStand
 
         public override string GetName()
         {
-            // Get the current language setting
-            ISettingsClass<string> en = (Api as ICoreClientAPI)?.Settings.String;
-            bool value = en.Get("language") == "en";
+            ICoreClientAPI capi = Api as ICoreClientAPI;
 
-            // Check if the entity is a wooden mannequin
+            bool value = false;
+
+            if (capi != null) { 
+
+                ISettingsClass<string> en = capi.Settings.String;
+                value = en.Get("language") == "en";
+            }
+
             if (Code == GetAssetLocation("mannequins", "woondenmannequinstand"))
             {
-                return "Error (Pick up)";
+                return Lang.Get("item-creature-mannequinstand-error");
             }
 
-            // Check if the entity has a name tag
-            if (WatchedAttributes.HasAttribute("nametag"))
+            if (WatchedAttributes.HasAttribute("name"))
             {
-                return NameTag;
+                return Name;
             }
 
-            // Check if the base skin is "baldcypress" and the language is English
+       
             if (mannequinTreeKey["baseskin"].GetValue().Equals("baldcypress") && value)
             {
                 return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", "Bald Cypress");
             }
 
-            // If none of the above conditions are met, retrieve the name based on the base skin
+            
             return Lang.GetMatching(Code.Domain + ":item-creature-mannequinstand" + ": {0}", Lang.GetMatching("game:material-" + mannequinTreeKey.GetString(BaseSkin)));
         }
 

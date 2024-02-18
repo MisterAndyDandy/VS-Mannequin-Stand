@@ -4,15 +4,22 @@
 	"mannequins:item-woondenmannequinstand": "Wooden Mannequin",
 
 	"mannequins:item-creature-mannequinstand: {0}": "{0} Mannequin",
+	"mannequins:item-creature-mannequinstand-error": "Error (Pick up)",
+
 	"mannequins:item-mannequinstand: {0}": "{0} Mannequin ",
 
 	"mannequins:item-nametag: {0}": "Name tag {0}",
 
+	"mannequins:command-nametag-desc": "Name tag is used for mannequin take a look at subcommand for more info",
+	"mannequins:subcommand-set-desc": "Used to customize mannequin name",
+	"mannequins:subcommand-remove-desc": "Used to remove customize name",
 
+	"mannequins:command-nametag-remove-name-entity": "You have successfully removed name tag",
+	"mannequins:command-nametag-remove-name-missing-item": "Ink and quill needs to be in your off hand",
+	"mannequins:command-nametag-remove-name-missing-permission: {0}": "You don't have permission to remove name from this {0}",
 
-	"mannequins:command-nametag-desc": "used to set mannequin name to custom name.",
-	"mannequins:command-nametag-success-entity": "You have successfully written on a mannequin",
-	"mannequins:command-nametag-success-item": "You have successfully written on a name tag",
-	"mannequins:command-nametag-missing-item": "Ink and quill needs to be in your off hand",
-	"mannequins:command-nametag-missing-permission: {0}": "You don't have permission to set this {0}"
+	"mannequins:command-nametag-set-name-entity": "You have successfully written on a mannequin",
+	"mannequins:command-nametag-set-name-item": "You have successfully written on a name tag",
+	"mannequins:command-nametag-set-name-missing-item": "Ink and quill needs to be in your off hand",
+	"mannequins:command-nametag-set-name-missing-permission: {0}": "You don't have permission to set name for this {0}"
 }

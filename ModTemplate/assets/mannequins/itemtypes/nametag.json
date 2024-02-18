@@ -11,6 +11,10 @@
     "items": [ "*" ]
   },
   "maxstacksize": 64,
+  "combustibleProps": {
+    "burnTemperature": 200,
+    "burnDuration": 5
+  },
   "guiTransform": {
     "translation": {
       "x": 0,

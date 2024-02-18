@@ -6,6 +6,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace MannequinStand
 {
@@ -25,7 +26,7 @@ namespace MannequinStand
         /// <param name="handling">The handling mode of the interaction.</param>
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
-            if (blockSel == null) return;
+            if (blockSel == null && entitySel == null) return;
 
             IPlayer player = byEntity.World.PlayerByUid((byEntity as EntityPlayer)?.PlayerUID);
 
@@ -48,9 +49,9 @@ namespace MannequinStand
         {
             ITreeAttribute attribute = itemStack.Attributes;
 
-            if (attribute.HasAttribute("nametag"))
+            if (attribute.HasAttribute("name"))
             {
-                return Lang.GetMatching("mannequins:item-nametag: {0}", $"({attribute.GetAsString("nametag")})");
+                return Lang.GetMatching("mannequins:item-nametag: {0}", $"({attribute.GetAsString("name")})");
             }
 
             return Lang.GetMatching("mannequins:item-nametag: {0}", "".RemoveDiacritics());
