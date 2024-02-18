@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>bin\$(Configuration)\Mods\$(MSBuildProjectName)</OutputPath>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
-  </PropertyGroup>
-
-  <ItemGroup>
+	<ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
