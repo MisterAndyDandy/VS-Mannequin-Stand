@@ -1,14 +1,10 @@
 ﻿using System;
-using HarmonyLib;
+using Mannequins.Entities;
 using MannequinStand.Common;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 
-namespace MannequinStand.Client
+namespace Mannequins.Client
 {
     public class GuiInventoryDialog : GuiDialog
     {
@@ -85,6 +81,7 @@ namespace MannequinStand.Client
 
             SingleComposer.Compose();
         }
+
         public string GetDialogName(EntityMannequin entityMannequin)
         {
             // Get the name of the entity mannequin

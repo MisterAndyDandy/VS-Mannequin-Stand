@@ -1,12 +1,21 @@
 ﻿using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using MannequinStand.Util;
+using Mannequins.Util;
 using Vintagestory.API.Common.CommandAbbr;
+using Mannequins.Items;
+using Mannequins.Entities;
+using HarmonyLib;
+using System.Reflection;
+using Vintagestory.GameContent;
+using Vintagestory.API.Common.Entities;
+using System.Linq;
 using Vintagestory.API.Client;
+using Vintagestory.API.Datastructures;
+using Newtonsoft.Json.Linq;
+using System;
 
-namespace MannequinStand
+namespace Mannequins
 
 {   /// <summary>
     /// Represents the core functionality of the Mannequin Stand mod.
@@ -34,11 +43,69 @@ namespace MannequinStand
             
             api.RegisterEntity("EntityMannequinStand", typeof(EntityMannequin));
 
-      
             api.RegisterItemClass("ItemMannequinStand", typeof(ItemMannequin));
 
-         
+            api.RegisterEntityBehaviorClass("nameable", typeof(EntityBehaviorNameable));
+
             api.RegisterItemClass("ItemNameTag", typeof(ItemNameTag));
+        }
+
+        private struct BehaviorAsJsonObj
+        {
+            public string code;
+        }
+
+        public override void AssetsFinalize(ICoreAPI api)
+        {
+            base.AssetsFinalize(api);
+
+            BehaviorAsJsonObj newBehavior = new()
+            {
+                code = "nameable"
+            };
+            JsonObject newBehaviorJson = new(JToken.FromObject(newBehavior));
+
+            if (api.Side.IsServer())
+            {
+                foreach (EntityProperties entityType in api.World.EntityTypes)
+                {
+                    bool alreadyHas = entityType.Server.BehaviorsAsJsonObj.Any(behavior => behavior["code"].AsString() == newBehavior.code);
+                    if (!alreadyHas)
+                    {
+                        try
+                        {
+                            entityType.Server.BehaviorsAsJsonObj = entityType.Server.BehaviorsAsJsonObj.Append(newBehaviorJson).ToArray();
+                            //api.Logger.VerboseDebug("[FSMlib] Adding behavior '{0}' to entity '{1}:{2}'", newBehavior.code, entityType.Class, entityType.Code);
+                        }
+                        catch (Exception ex)
+                        {
+                            api.Logger.Error($"Failed to add behavior '{newBehavior.code}' to entity '{entityType.Class}:{entityType.Code}': {ex.Message}");
+                            // Optionally, handle the error or throw an exception
+                        }
+                    }
+                }
+            }
+
+            if (api.Side.IsClient())
+            {
+                foreach (EntityProperties entityType in api.World.EntityTypes)
+                {
+                    bool alreadyHas = entityType.Client.BehaviorsAsJsonObj.Any(behavior => behavior["code"].AsString() == newBehavior.code);
+                    if (!alreadyHas)
+                    {
+                        try
+                        {
+                            entityType.Client.BehaviorsAsJsonObj = entityType.Client.BehaviorsAsJsonObj.Append(newBehaviorJson).ToArray();
+                            //api.Logger.VerboseDebug("[FSMlib] Adding behavior '{0}' to entity '{1}:{2}'", newBehavior.code, entityType.Class, entityType.Code);
+                        }
+                        catch (Exception ex)
+                        {
+                            api.Logger.Error($"Failed to add behavior '{newBehavior.code}' to entity '{entityType.Class}:{entityType.Code}': {ex.Message}");
+                            // Optionally, handle the error or throw an exception
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -53,15 +120,15 @@ namespace MannequinStand
             chatCommands
                 .Create("nametag")
                 .WithDescription(Lang.Get("mannequins:command-nametag-desc"))
-                .RequiresPrivilege(Privilege.chat)
+                .RequiresPrivilege(Privilege.gamemode)
                 .BeginSubCommand("set")
-                    .WithDescription(Lang.Get("mannequins:subcommand-set-desc")) // Description for the 'set' subcommand
-                    .WithArgs(new ICommandArgumentParser[] { parsers.All("set name") }) // Arguments for the 'set' subcommand
-                    .HandleWith(Handler.SetNameTagCommand) // Handler method for the 'set' subcommand
-                .EndSub() // End the 'set' subcommand
+                    .WithDescription(Lang.Get("mannequins:subcommand-set-desc")) 
+                    .WithArgs(new ICommandArgumentParser[] { parsers.All("set name") }) 
+                    .HandleWith(Handler.SetNameTagCommand) 
+                .EndSub() 
                 .BeginSubCommand("remove")
-                    .WithDescription(Lang.Get("mannequins:subcommand-remove-desc")) // Description for the 'remove' subcommand
-                    .HandleWith(Handler.RemoveNameTagCommand); // Handler method for the 'remove' subcommand
+                    .WithDescription(Lang.Get("mannequins:subcommand-remove-desc")) 
+                    .HandleWith(Handler.RemoveNameTagCommand);
         }
     }
 }

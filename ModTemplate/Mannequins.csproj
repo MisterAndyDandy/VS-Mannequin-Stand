@@ -10,6 +10,14 @@
       <HintPath>$(AppData)\Vintagestory\Lib\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="cairo-sharp">
+      <HintPath>..\..\..\..\AppData\Roaming\Vintagestory\Lib\cairo-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\..\..\AppData\Roaming\Vintagestory\Lib\protobuf-net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(AppData)\Vintagestory\VintagestoryAPI.dll</HintPath>
       <Private>false</Private>
@@ -40,6 +48,8 @@
     <Content Remove="assets\mannequins\blocktypes\**" />
     <EmbeddedResource Remove="assets\mannequins\blocktypes\**" />
     <None Remove="assets\mannequins\blocktypes\**" />
+    <Compile Remove="src\Util\Patches.cs" />
+    <None Remove="assets\mannequins\patches\Patcher.json" />
 	<Content Include="modicon.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -54,6 +64,7 @@
 
   <ItemGroup>
     <Folder Include="assets\mannequins\shapes\block\" />
+    <Folder Include="src\Gui\" />
   </ItemGroup>
 
   <ItemGroup>

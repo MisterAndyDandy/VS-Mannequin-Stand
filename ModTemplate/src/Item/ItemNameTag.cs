@@ -1,77 +1,129 @@
 ﻿using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
+using System.Collections.Generic;
+using System.Text;
+using Mannequins.Util;
+using Mannequins.Client;
+using Mannequins.Entities;
 
-namespace MannequinStand
+namespace Mannequins.Items
 {
     /// <summary>
     /// Represents a name tag item used to label entities or objects.
     /// </summary>
     public class ItemNameTag : Item
     {
-        /// <summary>
-        /// Handles the start of interaction with the held name tag item.
-        /// </summary>
-        /// <param name="slot">The item slot containing the name tag.</param>
-        /// <param name="byEntity">The entity holding the name tag.</param>
-        /// <param name="blockSel">The block selected during interaction.</param>
-        /// <param name="entitySel">The entity selected during interaction.</param>
-        /// <param name="firstEvent">Indicates if this is the first interaction event.</param>
-        /// <param name="handling">The handling mode of the interaction.</param>
+        private ModSystemEditableNameTag nameTagModSys;
+
+        private ICoreClientAPI capi;
+
+        private WorldInteraction[] interactions;
+
+        public override void OnLoaded(ICoreAPI api)
+        {
+            capi = api as ICoreClientAPI;
+            nameTagModSys = api.ModLoader.GetModSystem<ModSystemEditableNameTag>();
+            interactions = ObjectCacheUtil.GetOrCreate(api, "nameTagInteractions", delegate
+            {
+                List<ItemStack> list = new List<ItemStack>();
+                foreach (CollectibleObject collectible in api.World.Collectibles)
+                {
+                    if (collectible.Attributes != null && collectible.Attributes.IsTrue("writingTool"))
+                    {
+                        list.Add(new ItemStack(collectible));
+                    }
+                }
+
+                return new WorldInteraction[1]
+                {
+                new WorldInteraction
+                {
+                    MouseButton = EnumMouseButton.Right,
+                    Itemstacks = list.ToArray(),
+                    ActionLangCode = "heldhelp-write",
+                    GetMatchingStacks = (WorldInteraction wi, BlockSelection bs, EntitySelection es) => (capi.World.Player.InventoryManager.ActiveHotbarSlot.Itemstack.Attributes.GetString("signedby") == null) ? wi.Itemstacks : null
+                }
+                };
+            });
+        }
+
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
-            if (blockSel == null || entitySel == null) return;
-
-            IPlayer player = byEntity.World.PlayerByUid((byEntity as EntityPlayer)?.PlayerUID);
-
-            if (!byEntity.World.Claims.TryAccess(player, blockSel.Position, EnumBlockAccessFlags.BuildOrBreak))
+            if (byEntity.Controls.Sneak)
             {
-                
-                slot.MarkDirty();
+                base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
                 return;
             }
 
-            handling = EnumHandHandling.PreventDefaultAction;
-        }
-
-        /// <summary>
-        /// Gets the display name of the held name tag item.
-        /// </summary>
-        /// <param name="itemStack">The ItemStack representing the name tag.</param>
-        /// <returns>The display name of the name tag item.</returns>
-        public override string GetHeldItemName(ItemStack itemStack)
-        {
-            ITreeAttribute attribute = itemStack.Attributes;
-
-            if (attribute.HasAttribute("name"))
+            if (entitySel?.Entity.HasBehavior("") ?? false)
             {
-                return Lang.GetMatching("mannequins:item-nametag: {0}", $"({attribute.GetAsString("name")})");
+                base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+                return;
             }
 
-            return Lang.GetMatching("mannequins:item-nametag: {0}", "".RemoveDiacritics());
+            IPlayer player = (byEntity as EntityPlayer).Player;
+            if (isWritingTool(byEntity.LeftHandItemSlot))
+            {
+                nameTagModSys.BeginEdit(player, slot);
+                if (api.Side == EnumAppSide.Client)
+                {
+                    GuiDialogEditableNameTag dlg = new GuiDialogEditableNameTag(slot.Itemstack, api as ICoreClientAPI);
+                    dlg.OnClosed += delegate
+                    {
+                        if (dlg.DidSave)
+                        {
+                            nameTagModSys.EndEdit(player, dlg.Name);
+                        }
+                        else
+                        {
+                            nameTagModSys.CancelEdit(player);
+                        }
+                    };
+                    dlg.TryOpen();
+                }
+
+                handling = EnumHandHandling.PreventDefault;
+            }
+            else
+            {
+                (api as ICoreClientAPI)?.TriggerIngameError(!isWritingTool(byEntity.LeftHandItemSlot), "noink", Lang.Get("Need ink and quill in my off hand"));
+                base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+            }
         }
 
-        /// <summary>
-        /// Gets the list of world interactions provided by the held name tag item.
-        /// </summary>
-        /// <param name="inSlot">The slot containing the name tag item.</param>
-        /// <returns>An array of WorldInteraction instances.</returns>
+        public override string GetHeldItemName(ItemStack itemStack)
+        {
+            string @string = itemStack.Attributes.GetString("name");
+            if (@string != null && @string.Length > 0)
+            {
+                return @string;
+            }
+
+            return base.GetHeldItemName(itemStack);
+        }
+
+        public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+        {
+            base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+        }
+
+        public static bool isWritingTool(ItemSlot slot)
+        {
+            ItemStack itemstack = slot.Itemstack;
+            if (itemstack == null)
+            {
+                return false;
+            }
+
+            return itemstack.Collectible.Attributes?.IsTrue("writingTool") == true;
+        }
+
         public override WorldInteraction[] GetHeldInteractionHelp(ItemSlot inSlot)
         {
-           
-            WorldInteraction placeInteraction = new WorldInteraction
-            {
-                ActionLangCode = "heldhelp-place",
-                MouseButton = EnumMouseButton.Right
-            };
-
-            return new WorldInteraction[] { placeInteraction }.Append(base.GetHeldInteractionHelp(inSlot)).ToArray();
+            return interactions.Append(base.GetHeldInteractionHelp(inSlot));
         }
     }
 }

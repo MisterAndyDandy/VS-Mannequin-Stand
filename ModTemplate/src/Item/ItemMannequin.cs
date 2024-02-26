@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Linq;
+using Mannequins.Entities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -10,16 +7,14 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
 
-namespace MannequinStand
+namespace Mannequins.Items
 {
     /// <summary>
     /// Represents an item for placing mannequins in the world.
     /// </summary>
     public class ItemMannequin : Item
     {
-
 
         /// <summary>
         /// Handles the start of an interaction when the item is held.
@@ -98,9 +93,9 @@ namespace MannequinStand
             ICoreClientAPI capi = api as ICoreClientAPI;
             bool value = capi?.Settings?.String?.Get("language") == "en";
 
-            if (attribute.HasAttribute("nametag"))
+            if (attribute.HasAttribute("name"))
             {
-                return attribute.GetString("nametag");
+                return attribute.GetString("name");
             }
 
             string materialName = Lang.GetMatching("game:material-" + Code.EndVariant());
@@ -110,7 +105,7 @@ namespace MannequinStand
                 return Lang.GetMatching(Code.Domain + ":item-mannequinstand" + ": {0}", "Bald Cypress");
             }
 
-            return Lang.GetMatching(Code.Domain + ":item-mannequinstand" + ": {0}", materialName);
+            return Lang.GetMatching(Code.Domain + ":item-mannequinstand" + ": {0}", materialName); 
         }
 
         /// <summary>

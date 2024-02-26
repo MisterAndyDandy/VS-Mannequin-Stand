@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Metadata;
-using MannequinStand.Client;
+using Mannequins.Client;
 using MannequinStand.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -14,7 +12,7 @@ using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace MannequinStand
+namespace Mannequins.Entities
 {
     public class EntityMannequin : EntityHumanoid
     {
@@ -33,8 +31,6 @@ namespace MannequinStand
         public override IInventory GearInventory => gearInv;
 
         protected virtual string inventoryId => "gear-" + EntityId;
-
-        public string Name => WatchedAttributes.GetAsString("name");
 
         protected int CurPose
         {
@@ -71,6 +67,8 @@ namespace MannequinStand
                 return light;
             }
         }
+
+        public string Name => WatchedAttributes.GetAsString("name");
 
         public ItemStack PlacedByItemStack { get; set; }
 
@@ -197,6 +195,7 @@ namespace MannequinStand
 
             if(PlacedByItemStack.Attributes.HasAttribute("name")) 
             {
+              WatchedAttributes.SetItemstack("entityNametag", PlacedByItemStack.Attributes.GetItemstack("entityNametag"));
               WatchedAttributes.SetString("name", PlacedByItemStack.Attributes.GetAsString("name"));
             }
 
@@ -290,24 +289,19 @@ namespace MannequinStand
                 ChangeToNextPose();
             }
 
-            if (IsNameTagItem(withSlot) && !HasEntityNameAttribute())
+            if (IsNameTagItem(withSlot) && !EntityHasAttribute())
             {
                 HandleNameTagInteraction(withSlot);
             }
 
             if(HasTool(withSlot))
             {
-
+                HandleRemoveNameTagInteraction(byEntity as EntityPlayer);
             }
         }
 
         private bool HasTool(ItemSlot slot) {
             return slot.Itemstack?.Collectible?.Tool is EnumTool.Knife or EnumTool.Shears;
-        }
-
-        private bool HasEntityNameAttribute()
-        {
-            return WatchedAttributes.HasAttribute("name");
         }
 
         private bool IsWrench(ItemSlot slot)
@@ -320,17 +314,44 @@ namespace MannequinStand
             return slot.Itemstack.Attributes.HasAttribute("name");
         }
 
-        private void HandleRemoveNameTagInteraction() 
+        private void HandleRemoveNameTagInteraction(EntityPlayer entityPlayer) 
         {
-            ItemStack itemStack = WatchedAttributes.GetItemstack("nameTagItemStack");
+            SyncedTreeAttribute entityattributes = WatchedAttributes;
+
+            if (EntityHasAttribute())
+            {
+                ItemStack itemStack = WatchedAttributes.GetItemstack("entityNametag");
+                itemStack.Attributes.RemoveAttribute("name");
+                itemStack.StackSize = 1;
+                itemStack.ResolveBlockOrItem(Api.World);
+
+                if (!entityPlayer.Player.InventoryManager.TryGiveItemstack(itemStack))
+                {
+                    Api.World.SpawnItemEntity(itemStack, entityPlayer.Pos.AsBlockPos.ToVec3d().Add(0.5, 0.5, 0.5));
+                }
+
+                entityattributes.RemoveAttribute("name");
+                entityattributes.RemoveAttribute("entityNametag");
+            }
+
         }
 
         private void HandleNameTagInteraction(ItemSlot slot)
         {
-            WatchedAttributes.SetItemstack("nameTagItemStack", slot.Itemstack);
+            WatchedAttributes.SetItemstack("entityNametag", slot.Itemstack);
             WatchedAttributes.SetString("name", slot.Itemstack.Attributes.GetAsString("name"));
             slot.TakeOut(1);
             slot.MarkDirty();
+        }
+
+
+        private bool EntityHasAttribute() {
+            if (WatchedAttributes.HasAttribute("name") && WatchedAttributes.HasAttribute("entityNametag"))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected virtual bool TryTakeItemFromEntity(EntityAgent byEntity, ItemSlot intoSlot)
@@ -372,9 +393,10 @@ namespace MannequinStand
             ItemStack itemStack = new ItemStack(entityAsItem);
             itemStack.Attributes[MannequinTreeKey] = mannequinTreeKey.Clone();
 
-            if (WatchedAttributes.HasAttribute("name"))
+            if (EntityHasAttribute())
             {
-                itemStack.Attributes.SetString("name", Name);
+                itemStack.Attributes.SetItemstack("entityNametag", WatchedAttributes.GetItemstack("entityNametag"));
+                itemStack.Attributes.SetString("name", WatchedAttributes.GetAsString("name"));
             }
 
             itemStack.Collectible.Code.EndVariant().Replace(itemStack.Collectible.Code.EndVariant(), MannequinMaterial);
@@ -430,7 +452,6 @@ namespace MannequinStand
                 return false;
             }
 
-            player.Entity.StopAnimation("interactstatic");
             player.InventoryManager.OpenInventory(GearInventory);
             capi.Network.SendEntityPacket(EntityId, packetId_OpenInventory);
             return true;
@@ -517,7 +538,6 @@ namespace MannequinStand
             {
                 return Name;
             }
-
        
             if (mannequinTreeKey["baseskin"].GetValue().Equals("baldcypress") && value)
             {
